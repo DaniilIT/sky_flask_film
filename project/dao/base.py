@@ -4,7 +4,9 @@ from flask import current_app
 from flask_sqlalchemy import BaseQuery
 from sqlalchemy.orm import scoped_session
 from werkzeug.exceptions import NotFound
+
 from project.setup.db.models import Base
+
 
 T = TypeVar('T', bound=Base)
 
@@ -26,7 +28,7 @@ class BaseDAO(Generic[T]):
         stmt: BaseQuery = self._db_session.query(self.__model__)
         if page:
             try:
-                return stmt.paginate(page, self._items_per_page).items
+                return stmt.paginate(page=page, per_page=self._items_per_page).items
             except NotFound:
                 return []
         return stmt.all()

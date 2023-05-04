@@ -4,7 +4,7 @@ from project.container import genre_service
 from project.setup.api.models import genre
 from project.setup.api.parsers import page_parser
 
-api = Namespace('genres')
+api = Namespace('genres', description='Жанры')
 
 
 @api.route('/')
