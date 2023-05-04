@@ -1,5 +1,5 @@
 from project.dao.base import BaseDAO
-from project.models import Genre
+from project.dao.models import Genre
 
 
 class GenresDAO(BaseDAO[Genre]):

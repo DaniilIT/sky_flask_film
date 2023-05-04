@@ -2,7 +2,7 @@ from typing import Optional
 
 from project.dao.base import BaseDAO
 from project.exceptions import ItemNotFound
-from project.models import Genre
+from project.dao.models import Genre
 
 
 class GenresService:
