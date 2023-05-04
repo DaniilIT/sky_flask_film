@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from project.exceptions import ItemNotFound
-from project.models import Genre
+from project.dao.models import Genre
 from project.services import GenresService
 
 

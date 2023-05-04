@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from flask_sqlalchemy import BaseQuery
+from flask_sqlalchemy.query import Query
 from sqlalchemy import desc
 from werkzeug.exceptions import NotFound
 
@@ -12,7 +12,7 @@ class MoviesDAO(BaseDAO[Movie]):
     __model__ = Movie
 
     def get_all(self, page: Optional[int] = None, status: Optional[str] = None) -> List[Movie]:
-        stmt: BaseQuery = self._db_session.query(Movie)
+        stmt: Query = self._db_session.query(Movie)
         if status and status.lower() == "new":
             stmt = stmt.order_by(desc(Movie.year))
         if page:

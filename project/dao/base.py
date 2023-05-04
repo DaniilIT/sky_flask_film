@@ -1,7 +1,7 @@
 from typing import Generic, List, Optional, TypeVar
 
 from flask import current_app
-from flask_sqlalchemy import BaseQuery
+from flask_sqlalchemy.query import Query
 from sqlalchemy.orm import scoped_session
 from werkzeug.exceptions import NotFound
 
@@ -22,10 +22,10 @@ class BaseDAO(Generic[T]):
         return current_app.config['ITEMS_PER_PAGE']
 
     def get_by_id(self, pk: int) -> Optional[T]:
-        return self._db_session.query(self.__model__).get(pk)
+        return self._db_session.get(self.__model__, pk)
 
     def get_all(self, page: Optional[int] = None) -> List[T]:
-        stmt: BaseQuery = self._db_session.query(self.__model__)
+        stmt: Query = self._db_session.query(self.__model__)
         if page:
             try:
                 return stmt.paginate(page=page, per_page=self._items_per_page).items
