@@ -9,13 +9,13 @@ api = Namespace('movies', description='Фильмы')
 
 @api.route('/')
 class MoviesView(Resource):
-    @api.expect(page_parser)
-    @api.expect(status_parser)
+    @api.expect(page_parser, status_parser)
     @api.marshal_with(movie, as_list=True, code=200, description='OK')
     def get(self):
         """
         Get all movies.
         """
+        # status = request.args.get('status')
         return movie_service.get_all(**page_parser.parse_args(),
                                      **status_parser.parse_args())
 

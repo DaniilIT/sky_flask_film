@@ -4,3 +4,6 @@ class BaseServiceError(Exception):
 
 class ItemNotFound(BaseServiceError):
     code = 404
+
+class BadRequest(BaseServiceError):
+    code = 400
