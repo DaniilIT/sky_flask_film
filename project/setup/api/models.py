@@ -28,10 +28,10 @@ movie: Model = api.model('Фильм', {
 user: Model = api.model('Пользователь', {
     'id': fields.Integer(required=True, example=1),
     'email': fields.String(required=True, example='example@mail.ru'),
-    'name': fields.String(required=True, example='Иван'),
-    'surname': fields.String(required=True, example='Иванов'),
-
-    'favourite_genre': fields.Nested(genre),
+    'name': fields.String(example='Иван'),
+    'surname': fields.String(example='Иванов'),
+    'favourite_genre': fields.Integer(example=1),
+    'favourite_genre_obj': fields.Nested(genre),
 })
 
 token: Model = api.model('JWT токены', {

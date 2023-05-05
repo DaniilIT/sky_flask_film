@@ -11,7 +11,7 @@ api = Namespace('auth', description='Аутентификация')
 @api.route('/register/')
 class RegisterView(Resource):
     @api.response(400, 'Bad request')
-    @api.marshal_with(None, code=201, description='OK')
+    @api.doc(responses={201: 'OK'})
     def post(self):
         """
         Register user.

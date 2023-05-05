@@ -22,6 +22,12 @@ class UsersService:
             return user
         raise ItemNotFound(f'User with pk={pk} not exists.')
 
+    def get_by_email(self, email: str) -> User:
+        try:
+            return self.dao.get_by_email(email)
+        except SQLAlchemyError:
+            raise BadRequest("Invalid user email")
+
     def get_all(self, page: Optional[int] = None) -> list[User]:
         return self.dao.get_all(page=page)
 
@@ -29,9 +35,9 @@ class UsersService:
         try:
             return self.dao.create(user)
         except IntegrityError as e:
-            if "email" in str(e):
-                raise BadRequest("A user with the same email address already exists")
-            raise BaseServiceError("Something went wrong")
+            if 'email' in str(e):
+                raise BadRequest('A user with the same email address already exists')
+            raise BaseServiceError('Something went wrong')
         except SQLAlchemyError:
             raise BaseServiceError()
 
@@ -40,11 +46,8 @@ class UsersService:
         pattern = re.compile(
             r'^\S+@\S+\.\S+$'
         )
-        print(email)
-        print(pattern.search(email))
         if pattern.search(email):
             return True
-        return False
 
     @staticmethod
     def validate_password(password):
@@ -53,7 +56,6 @@ class UsersService:
         )
         if pattern.search(password):
             return True
-        return False
 
     def register(self, email: str, password: str):
         if not self.validate_email(email):
@@ -62,7 +64,7 @@ class UsersService:
             raise BadRequest('Simple password')
 
         user = User(email=email, password=generate_password_hash(password),
-                    name='', surname='', favorite_genre_id=None)
+                    name='', surname='', favourite_genre=None)
         return self.create(user)
 
     @staticmethod
@@ -87,10 +89,7 @@ class UsersService:
         }
 
     def login(self, email: str, password: str):
-        try:
-            user = self.dao.get_by_email(email)
-        except SQLAlchemyError:
-            raise BadRequest("Invalid user email")
+        user = self.get_by_email(email)
 
         if user is None:
             raise BadRequest("Email not found")
@@ -105,12 +104,38 @@ class UsersService:
                               algorithms=[current_app.config['TOKEN_ALGORITHM']])
         user_email = jwt_data.get('email')
 
-        try:
-            user = self.dao.get_by_email(user_email)
-        except SQLAlchemyError:
-            raise BadRequest("Invalid user email")
+        user = self.get_by_email(user_email)
 
         if user is None:
             raise BadRequest("Email not found")
 
         return self.generate_tokens(user)
+
+    def patch(self, user_email: str, name: str, surname: str, favourite_genre: int) -> User:
+        user = self.get_by_email(user_email)
+
+        if name:
+            user.name = name
+        if surname:
+            user.surname = surname
+        if favourite_genre:
+            user.favourite_genre = favourite_genre
+
+        self.dao.update()
+
+        return user
+
+    def set_password(self, user_email: str, password_1, password_2):
+        user = self.get_by_email(user_email)
+
+        if not compose_passwords(user.password, password_1):
+            raise BadRequest("Invalid user password")
+
+        if not self.validate_password(password_2):
+            raise BadRequest('Simple password')
+
+        user.password = generate_password_hash(password_2)
+
+        self.dao.update()
+
+        return user

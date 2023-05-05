@@ -17,7 +17,8 @@ class UsersDAO(BaseDAO[User]):
         self._db_session.commit()
         return user
 
-    update = create
+    def update(self):
+        self._db_session.commit()
 
     def delete(self, user: User):
         self._db_session.delete(user)
