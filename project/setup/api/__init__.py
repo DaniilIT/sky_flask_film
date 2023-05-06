@@ -4,6 +4,6 @@ api = Api(
     authorizations={
         "Bearer": {"type": "apiKey", "in": "header", "name": "Authorization"}
     },
-    title="Flask Course Project 3",
+    title="Sky movies",
     doc="/docs",
 )
