@@ -24,7 +24,7 @@ class RegisterView(Resource):
         if not (user_email and user_password):
             raise BadRequest()
         user = user_service.register(user_email, user_password)
-        return 'OK', 201, {'Location': '/users/'}  # Headers
+        return 'OK', 201, {'Location': f'/users/{user.id}'}  # Headers
 
 
 @api.route('/login/')
@@ -40,7 +40,8 @@ class LoginView(Resource):
         user_password = data.get('password')
         if not (user_email and user_password):
             raise BadRequest()
-        return user_service.login(user_email, user_password)
+        tokens = user_service.login(user_email, user_password)
+        return tokens
 
     @api.response(400, 'Bad request')
     @api.marshal_with(token, code=201, description='OK')
@@ -52,4 +53,5 @@ class LoginView(Resource):
         refresh_token = data.get('refresh_token')
         if not refresh_token:
             raise BadRequest()
-        return user_service.refresh(refresh_token)
+        tokens = user_service.refresh(refresh_token)
+        return tokens

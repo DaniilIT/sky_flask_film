@@ -1,35 +1,24 @@
 import re
 from calendar import timegm
 from datetime import datetime, timedelta
-from typing import Optional
 
 import jwt
 from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
-from project.dao.base import BaseDAO
+from project.dao import UsersDAO
 from project.dao.models import User
-from project.exceptions import BaseServiceError, ItemNotFound, BadRequest
+from project.exceptions import BaseServiceError, BadRequest
+from project.services.base import BaseService
 from project.tools.security import generate_password_hash, compose_passwords
 
 
-class UsersService:
-    def __init__(self, dao: BaseDAO) -> None:
-        self.dao = dao
-
-    def get_item(self, pk: int) -> User:
-        if user := self.dao.get_by_id(pk):
-            return user
-        raise ItemNotFound(f'User with pk={pk} not exists.')
-
+class UsersService(BaseService[UsersDAO]):
     def get_by_email(self, email: str) -> User:
         try:
             return self.dao.get_by_email(email)
         except SQLAlchemyError:
             raise BadRequest("Invalid user email")
-
-    def get_all(self, page: Optional[int] = None) -> list[User]:
-        return self.dao.get_all(page=page)
 
     def create(self, user: User):
         try:
@@ -122,7 +111,6 @@ class UsersService:
             user.favourite_genre = favourite_genre
 
         self.dao.update()
-
         return user
 
     def set_password(self, user_email: str, password_1, password_2):
@@ -135,7 +123,5 @@ class UsersService:
             raise BadRequest('Simple password')
 
         user.password = generate_password_hash(password_2)
-
         self.dao.update()
-
         return user

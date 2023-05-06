@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource
 
 from project.container import genre_service
+from project.exceptions import BaseServiceError
 from project.setup.api.models import genre
 from project.setup.api.parsers import page_parser
 
@@ -15,7 +16,9 @@ class GenresView(Resource):
         """
         Get all genres.
         """
-        return genre_service.get_all(**page_parser.parse_args())
+        # page = request.args.get('page')
+        genres = genre_service.get_all(**page_parser.parse_args())
+        return genres
 
 
 @api.route('/<int:genre_id>/')
@@ -26,4 +29,8 @@ class GenreView(Resource):
         """
         Get genre by id.
         """
-        return genre_service.get_item(genre_id)
+        try:
+            current_genre = genre_service.get_item(genre_id)
+        except BaseServiceError:
+            raise
+        return current_genre

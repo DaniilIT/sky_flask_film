@@ -1,7 +1,9 @@
+from functools import wraps
+
 import jwt
 from flask import request, current_app
 from flask_restx import abort
-from functools import wraps
+
 
 def token_required(func):
     @wraps(func)
@@ -16,10 +18,10 @@ def token_required(func):
             jwt_data = jwt.decode(jwt=token, key=current_app.config['SECRET_KEY'],
                                   algorithms=[current_app.config['TOKEN_ALGORITHM']])
             user_email = jwt_data['email']
+            kwargs.update({'user_email': user_email})
         except (jwt.exceptions.PyJWTError, KeyError):
             abort(401)  # Unauthorized
 
-        kwargs.update({"user_email": user_email})
-
         return func(*args, **kwargs)
+
     return wrapper

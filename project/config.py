@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import Type
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent  # Path.cwd()
 
 
 class BaseConfig:
@@ -18,7 +18,7 @@ class BaseConfig:
     TOKEN_EXPIRE_MINUTES = 15
     TOKEN_EXPIRE_DAYS = 30
 
-    PWD_HASH_SALT = base64.b64decode("salt")
+    PWD_HASH_SALT = base64.b64decode('salt')
     PWD_HASH_ITERATIONS = 10_000
 
     RESTX_JSON = {
@@ -28,7 +28,7 @@ class BaseConfig:
 
 class TestingConfig(BaseConfig):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
 
 
 class DevelopmentConfig(BaseConfig):
@@ -39,7 +39,7 @@ class DevelopmentConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
-    # TODO: дополнить конфиг
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + BASE_DIR.joinpath('project.db').as_posix()
 
 
 class ConfigFactory:

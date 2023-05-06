@@ -16,8 +16,9 @@ class MoviesView(Resource):
         Get all movies.
         """
         # status = request.args.get('status')
-        return movie_service.get_all(**page_parser.parse_args(),
-                                     **status_parser.parse_args())
+        movies = movie_service.get_all(**page_parser.parse_args(),
+                                       **status_parser.parse_args())
+        return movies
 
 
 @api.route('/<int:movie_id>/')
@@ -28,4 +29,5 @@ class MovieView(Resource):
         """
         Get movie by id.
         """
-        return movie_service.get_item(movie_id)
+        current_movie = movie_service.get_item(movie_id)
+        return current_movie

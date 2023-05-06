@@ -19,29 +19,31 @@ class UserView(Resource):
         """
         Get user.
         """
-        return user_service.get_by_email(user_email)
+        current_user = user_service.get_by_email(user_email)
+        return current_user
 
     @api.response(400, 'Bad request')
-    @api.doc(responses={201: 'OK'})
+    @api.response(401, 'Unauthorized')
+    @api.doc(responses={204: 'OK'})
     @token_required
     def patch(self, user_email):
         """
         Change user.
         """
         data = request.json
-        print(data)
         name = data.get('name')
         surname = data.get('surname')
         favourite_genre = data.get('favourite_genre')
 
-        user = user_service.patch(user_email, name, surname, favourite_genre)
-        return 'OK', 201  # {'Location': f'/user/{user.id}/'}  # Headers
+        user_service.patch(user_email, name, surname, favourite_genre)
+        return 'OK', 204
 
 
 @api.route('/password/')
 class PasswordView(Resource):
     @api.response(400, 'Bad request')
-    @api.doc(responses={201: 'OK'})
+    @api.response(401, 'Unauthorized')
+    @api.doc(responses={204: 'OK'})
     @token_required
     def put(self, user_email):
         """
@@ -55,5 +57,4 @@ class PasswordView(Resource):
             raise BadRequest("Invalid password data")
 
         user_service.set_password(user_email, password_1, password_2)
-
-        return 'OK', 201
+        return 'OK', 204

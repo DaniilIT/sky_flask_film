@@ -15,7 +15,8 @@ class DirectorsView(Resource):
         """
         Get all directors.
         """
-        return director_service.get_all(**page_parser.parse_args())
+        directors = director_service.get_all(**page_parser.parse_args())
+        return directors
 
 
 @api.route('/<int:director_id>/')
@@ -26,4 +27,5 @@ class DirectorView(Resource):
         """
         Get director by id.
         """
-        return director_service.get_item(director_id)
+        current_director = director_service.get_item(director_id)
+        return current_director
