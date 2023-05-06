@@ -8,10 +8,10 @@ from werkzeug.exceptions import NotFound
 from project.setup.db.models import Base
 
 
-T = TypeVar('T', bound=Base)
+T = TypeVar('T', bound=Base)  # экземпляр от дочернего класса от Base
 
 
-class BaseDAO(Generic[T]):
+class BaseDAO(Generic[T]):  # обобщенный класс
     __model__ = Base
 
     def __init__(self, db_session: scoped_session) -> None:

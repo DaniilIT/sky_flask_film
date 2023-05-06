@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from project.config import TestingConfig
@@ -28,3 +30,26 @@ def db(app):
 def client(app, db):
     with app.test_client() as client:
         yield client
+
+
+@pytest.fixture
+def tokens(client):
+    data = json.dumps({
+        'email': 'example@mail.ru',
+        'password': '1Aa#2Bb#3Cc#'
+    })
+
+    client.post(
+        "/auth/register/",
+        data=data,
+        content_type='application/json'
+        # content_type = 'multipart/form-data'
+    )
+
+    response = client.post(
+        "/auth/login/",
+        data=data,
+        content_type='application/json'
+    )
+
+    return response.json
