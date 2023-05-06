@@ -31,14 +31,3 @@ class MoviesDAO(BaseDAO[Movie]):
             except NotFound:
                 return []
         return stmt.all()
-
-    def create(self, movie: Movie):
-        self._db_session.add(movie)
-        self._db_session.commit()
-        return movie
-
-    update = create
-
-    def delete(self, movie: Movie):
-        self._db_session.delete(movie)
-        self._db_session.commit()

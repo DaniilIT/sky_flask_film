@@ -32,3 +32,15 @@ class BaseDAO(Generic[T]):
             except NotFound:
                 return []
         return stmt.all()
+
+    def create(self, instance: T):
+        self._db_session.add(instance)
+        self._db_session.commit()
+        return instance
+
+    def update(self):
+        self._db_session.commit()
+
+    def delete(self, instance: T):
+        self._db_session.delete(instance)
+        self._db_session.commit()
