@@ -1,5 +1,6 @@
 import json
 
+
 class TestUsersView:
     def test_user_get(self, client, tokens):
         response = client.get(

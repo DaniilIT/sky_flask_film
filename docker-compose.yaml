@@ -3,16 +3,22 @@ services:
   front:
     build:
       context: ./front/
+    image: painassasin/node_cource_project:latest
     ports:
       - 80:80
+    restart: always
     depends_on:
       migrations:
         condition: service_completed_successfully
   api:
     build:
       context: ./api/
+    image: daniilit/sky_flask_film
     ports:
       - 5000:5000
+    restart: always
+    volumes:
+      - ./api/project/config.py:/src/project/config.py
     depends_on:
       migrations:
         condition: service_completed_successfully
@@ -21,6 +27,9 @@ services:
   migrations:
     build:
       context: ./api/
+    image: daniilit/sky_flask_film
+    volumes:
+      - ./api/project/config.py:/src/project/config.py
     depends_on:
       postgres:
         condition: service_healthy
@@ -28,9 +37,9 @@ services:
   postgres:
     image: postgres:alpine
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+      - POSTGRES_USER=r
+      - POSTGRES_PASSWORD=r
+      - POSTGRES_DB=r
     volumes:
       - ./pg_data:/var/lib/postgresql/data
     healthcheck:

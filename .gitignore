@@ -30,3 +30,4 @@ ENV/
 .pytest_cache/
 
 # Project
+pg_data/

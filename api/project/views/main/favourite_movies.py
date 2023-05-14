@@ -2,7 +2,7 @@ from flask_restx import Namespace, Resource
 
 from project.container import user_service, movie_service, favourite_movie_service
 from project.setup.api.models import movie
-from project.setup.api.parsers import page_parser, status_parser
+from project.setup.api.parsers import page_parser
 from project.tools.token_required import token_required
 
 api = Namespace('favorites/movies', description='Понравившееся фильмы')

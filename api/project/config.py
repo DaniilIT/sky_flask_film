@@ -39,7 +39,7 @@ class DevelopmentConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:password@postgres/postgres"
+    SQLALCHEMY_DATABASE_URI = "postgresql://$DB_USER:$DB_PASSWORDd@postgres/$DB_NAME"
 
 
 class ConfigFactory:
