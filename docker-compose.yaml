@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  front:
+    build:
+      context: ./front/
+    ports:
+      - 80:80
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+  api:
+    build:
+      context: ./api/
+    ports:
+      - 5000:5000
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+  migrations:
+    build:
+      context: ./api/
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: [ "sh", "migr.sh"]
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
