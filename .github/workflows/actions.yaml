@@ -1,29 +1,17 @@
 name: Build and deploy action  # CI
 on: [push]
 jobs:
-#   build_and_push:
-#     runs-on: ubuntu-latest
-#     env:
-#       DB_USER: ${{ secrets.DB_USER }}
-#       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#       DB_NAME: ${{ secrets.DB_NAME }}
-#       DOCKER_LOGIN: ${{ vars.DOCKER_LOGIN }}
-#       DOCKER_REPOSITORY: ${{ vars.DOCKER_REPOSITORY }}
-#       GITHUB_REF_NAME: $GITHUB_REF_NAME
-#       GITHUB_RUN_ID: $GITHUB_RUN_ID
-#     steps:
-#       - name: clone code
-#         uses: actions/checkout@v2
-#       - name: render configs
-#         run: |
-#           cat api/project/config.py | envsubst > api/project/docker_config.py
-#           cat docker-compose.yaml | envsubst > docker-compose.yaml
-#       - name: docker build
-#         run: docker build ./api -t ${{ vars.DOCKER_LOGIN }}/${{ vars.DOCKER_REPOSITORY }}:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-#       - name: docker login
-#         run: docker login -u ${{ vars.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_TOKEN }}
-#       - name: docker push
-#         run: docker push ${{ vars.DOCKER_LOGIN }}/${{ vars.DOCKER_REPOSITORY }}:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone code
+        uses: actions/checkout@v2
+      - name: docker build
+        run: docker build ./api -t ${{ vars.DOCKER_LOGIN }}/${{ vars.DOCKER_REPOSITORY }}:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+      - name: docker login
+        run: docker login -u ${{ vars.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_TOKEN }}
+      - name: docker push
+        run: docker push ${{ vars.DOCKER_LOGIN }}/${{ vars.DOCKER_REPOSITORY }}:$GITHUB_REF_NAME-$GITHUB_RUN_ID
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push
@@ -33,28 +21,29 @@ jobs:
       DB_NAME: ${{ secrets.DB_NAME }}
       DOCKER_LOGIN: ${{ vars.DOCKER_LOGIN }}
       DOCKER_REPOSITORY: ${{ vars.DOCKER_REPOSITORY }}
+      GITHUB_REF_NAME: $GITHUB_REF_NAME
+      GITHUB_RUN_ID: $GITHUB_RUN_ID
     steps:
       - name: clone code
         uses: actions/checkout@v2
       - name: render configs
         run: |
-          cat api/project/config.py | envsubst > api/project/docker_config.py
-          cat docker-compose.yaml | envsubst > docker-compose.yaml
+          cat config_ci.py | envsubst > config.py
+          cat docker-compose_ci.yaml | envsubst > docker-compose.yaml
       - name: clone files to server
         uses: appleboy/scp-action@master
         with:
           host: ${{ vars.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USERNAME }}
-          password: ${{ secrets.DEPLOY_PASSWORD }}
-          source: "api/project/docker_config.py,docker-compose.yaml"
-          target: "sky_flask_film"
-          strip_components: 0
-#       - name: run docker-compose
-#         uses: appleboy/ssh-action@master
-#         with:
-#           host: ${{ env.DEPLOY_HOST }}
-#           username: ${{ secrets.DEPLOY_USERNAME }}
-#           password: ${{ secrets.DEPLOY_PASSWORD }}
-#           script: |
-#             cd sky_flask_film
-#             echo ${{ secrets.DEPLOY_PASSWORD }} | sudo -S docker-compose up -d
+          key: ${{ secrets.DEPLOY_SSH }}
+          source: "config.py,docker-compose.yaml"
+          target: ${{ vars.DOCKER_REPOSITORY }}
+      - name: run docker-compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_SSH }}
+          script: |
+            cd sky_flask_film
+            echo ${{ secrets.DEPLOY_PASSWORD }} | sudo -S docker-compose up -d

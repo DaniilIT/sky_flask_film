@@ -1,8 +1,8 @@
 version: "3.9"
 services:
   front:
-    build:
-      context: ./front/
+#     build:
+#       context: ./front/
     image: painassasin/node_cource_project:latest
     ports:
       - 80:80
@@ -11,25 +11,25 @@ services:
       migrations:
         condition: service_completed_successfully
   api:
-    build:
-      context: ./api/
-    image: daniilit/sky_flask_film
+#     build:
+#       context: ./api/
+    image: ${DOCKER_LOGIN}/${DOCKER_REPOSITORY}:${GITHUB_REF_NAME}-${GITHUB_RUN_ID}
     ports:
       - 5000:5000
     restart: always
     volumes:
-      - ./api/project/config.py:/src/project/config.py
+      - ./config.py:/src/project/config.py
     depends_on:
       migrations:
         condition: service_completed_successfully
       postgres:
         condition: service_healthy
   migrations:
-    build:
-      context: ./api/
-    image: daniilit/sky_flask_film
+#     build:
+#       context: ./api/
+    image: ${DOCKER_LOGIN}/${DOCKER_REPOSITORY}:${GITHUB_REF_NAME}-${GITHUB_RUN_ID}
     volumes:
-      - ./api/project/config.py:/src/project/config.py
+      - ./config.py:/src/project/config.py
     depends_on:
       postgres:
         condition: service_healthy
@@ -37,9 +37,9 @@ services:
   postgres:
     image: postgres:alpine
     environment:
-      - POSTGRES_USER=r
-      - POSTGRES_PASSWORD=r
-      - POSTGRES_DB=r
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
       - ./pg_data:/var/lib/postgresql/data
     healthcheck:
