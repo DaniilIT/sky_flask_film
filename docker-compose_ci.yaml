@@ -4,7 +4,7 @@ services:
 #     build:
 #       context: ./front/
 #     image: painassasin/node_cource_project:latest
-	image: ${DOCKER_LOGIN}/${DOCKER_REPOSITORY}-front:${GITHUB_REF_NAME}-${GITHUB_RUN_ID}
+    image: ${DOCKER_LOGIN}/${DOCKER_REPOSITORY}-front:${GITHUB_REF_NAME}-${GITHUB_RUN_ID}
     ports:
       - 80:80
     restart: always

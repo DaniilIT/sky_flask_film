@@ -109,7 +109,7 @@ export const Movie = () => {
           <Heading label="Похожие фильмы"/>
           <MovieCardSet
             movies={movies.content.filter(item => item.genre.id === movie.content.genre.id)}
-            limit={12}
+            limit={4}
           />
         </div>
       </div>
