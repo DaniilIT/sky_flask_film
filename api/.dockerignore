@@ -16,7 +16,7 @@ ENV/
 
 # Data
 *.csv
-#*.json
+# *.json
 *.pkl
 *.sqlite3
 *.db
@@ -31,3 +31,5 @@ ENV/
 images/
 README.md
 requirements.dev.txt
+pytest.ini
+tests/

@@ -22,8 +22,6 @@ services:
     depends_on:
       migrations:
         condition: service_completed_successfully
-      postgres:
-        condition: service_healthy
   migrations:
 #     build:
 #       context: ./api/
@@ -37,9 +35,9 @@ services:
   postgres:
     image: postgres:alpine
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=$DB_USER
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=$DB_NAME
     volumes:
       - ./pg_data:/var/lib/postgresql/data
     healthcheck:
