@@ -1,11 +1,7 @@
 # Sky movies
 
-Это backend для сайта поиска фильмов. API взаимодействует с базой данных SQLite,
+Это backend для сайта поиска фильмов. API взаимодействует с базой данных,
 реализует аутентификацию пользователей и позволяет коллекционировать фильмы в избранном.
-
-<img src="images/sky_movies.png" alt="sky movies" title="Sky movies" style="height: 380px;" />
-
-Frontend находится [здесь](https://github.com/skypro-008/skypro_py_stand), или в виде docker container [здесь](https://hub.docker.com/r/painassasin/node_cource_project).
 
 Документация API swagger находится по адресу [/docs](http://127.0.0.1:5000/docs).
 
